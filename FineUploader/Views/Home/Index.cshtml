@@ -1,0 +1,100 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="~/Scripts/jquery-1.9.1.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <link href="~/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/fineuploader-5.0.2/fineuploader-5.0.2/fineuploader-5.0.2.min.css" rel="stylesheet" />
+    <script src="~/fineuploader-5.0.2/fineuploader-5.0.2/fineuploader-5.0.2.min.js"></script>
+    <title></title>
+    <script type="text/template" id="qq-template">
+        <div class="qq-uploader-selector qq-uploader" style="margin:50px;">
+            <div class="qq-total-progress-bar-container-selector qq-total-progress-bar-container">
+                <div class="qq-total-progress-bar-selector qq-progress-bar qq-total-progress-bar"></div>
+            </div>
+            <div class="qq-upload-drop-area-selector qq-upload-drop-area" qq-hide-dropzone>
+                <span></span>
+            </div>
+            <div class="qq-upload-button-selector  btn btn-success" style="float:left;">
+                <div style="width:110px;">上传本地图片</div>
+            </div>
+            <div style="float:left;margin:5px 0 0 10px;font-family: Verdana,Arial,Helvetica,sans-serif;font-size:12px;">(支持文件拖放上传)</div>
+            <span class="qq-drop-processing-selector qq-drop-processing">
+                <span></span>
+                <span class="qq-drop-processing-spinner-selector qq-drop-processing-spinner"></span>
+            </span>
+            <ul class="qq-upload-list-selector qq-upload-list" style="clear:both;">
+                <li>
+                    <div class="qq-progress-bar-container-selector">
+                        <div class="qq-progress-bar-selector qq-progress-bar"></div>
+                    </div>
+                    <span class="qq-upload-spinner-selector qq-upload-spinner"></span>
+                    <span class="qq-edit-filename-icon-selector qq-edit-filename-icon"></span>
+                    <span class="qq-upload-file-selector qq-upload-file"></span>
+                    <input class="qq-edit-filename-selector qq-edit-filename" tabindex="0" type="text">
+                    <span class="qq-upload-size-selector qq-upload-size"></span>
+                    @*<a class="qq-upload-cancel-selector qq-upload-cancel" href="#">cancel</a>//取消
+                    <a class="qq-upload-retry-selector qq-upload-retry" href="#">retry</a>//重试
+                    <a class="qq-upload-delete-selector qq-upload-delete" href="#">delete</a>//删除*@
+                    <span class="qq-upload-status-text-selector qq-upload-status-text"></span>
+                </li>
+            </ul>
+            <div style="clear:both;font-family: Verdana,Arial,Helvetica,sans-serif;font-size:12px;margin-top:20px;">只能上传单张10M以下的 png、jpg、gif 格式的图片</div>
+            <div id="message" style="color:red;margin-top:20px;"></div>
+        </div>
+    </script>
+
+</head>
+<body>
+    <div id="bootstrapped-fine-uploader"></div>
+
+    <script type="text/javascript">
+
+        function createUploader() {
+          
+            var uploader = new qq.FineUploader({
+                element: document.getElementById('bootstrapped-fine-uploader'),
+                request: {
+                    endpoint: '/home/ProcessUpload'
+                },
+                text: {
+                    uploadButton: '<i class="icon-upload icon-white"></i> Click me now and upload a product image',
+                    dropProcessing: '（支持文件拖放上传）'
+                },
+                template: "qq-template",
+                classes: {
+                    success: 'alert alert-success',
+                    fail: 'alert alert-error'
+                },
+                debug: true,
+                //multiple: false 设置上传单个文件还是多文件，false为单文件
+                validation: {
+                    allowedExtensions: ['jpeg', 'jpg', 'gif', 'png'],
+                    sizeLimit: 10485760 // 10M = 1024kb*1024bytes*10
+                },
+                showMessage: function (message) {
+                    $("#message").html(message);
+                },
+                callbacks: {
+                    onComplete: function (id, filename, responseText) {
+                        if (!responseText.success) {
+                            $("#message").html(responseText.message);
+                        } else {
+                            $("#message").html("");
+                        }
+                    },
+                
+                }
+
+            })
+        }
+
+        window.onload = createUploader;
+    </script>
+
+</body>
+</html>
